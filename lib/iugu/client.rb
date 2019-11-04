@@ -1,7 +1,7 @@
 
 module Iugu
   class Client
-    def initialize(api_key:)
+    def initialize(api_key: Iugu.api_key || Iugu.auth_from_env)
       @api_key = api_key
     end
 

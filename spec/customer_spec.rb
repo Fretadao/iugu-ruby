@@ -1,9 +1,11 @@
 require 'spec_helper'
 
 describe Iugu::Customer do
+  subject(:client) { Iugu::Client.new }
+
   describe '.create' do
     it 'should create a customer with just the email and name', :vcr do
-      customer = Iugu::Customer.create(email: 'john.snow@greatwall.com',
+      customer = client.customer.create(email: 'john.snow@greatwall.com',
                                        name: 'John Snow',
                                        notes: 'knows nothing')
 
@@ -14,7 +16,7 @@ describe Iugu::Customer do
     end
 
     it 'should create a customer with CPF', :vcr do
-      customer = Iugu::Customer.create(email: 'john.snow@greatwall.com',
+      customer = client.customer.create(email: 'john.snow@greatwall.com',
                                        name: 'John Snow',
                                        cpf_cnpj: '648.144.103-01')
 
@@ -23,7 +25,7 @@ describe Iugu::Customer do
     end
 
     it 'should create a customer with CPNJ', :vcr do
-      customer = Iugu::Customer.create(email: 'john.snow@greatwall.com',
+      customer = client.customer.create(email: 'john.snow@greatwall.com',
                                        name: 'John Snow',
                                        cpf_cnpj: '57.202.023/6256-27')
 
@@ -32,7 +34,7 @@ describe Iugu::Customer do
     end
 
     it 'should create a customer with full address', :vcr do
-      customer = Iugu::Customer.create(email: 'john.snow@greatwall.com',
+      customer = client.customer.create(email: 'john.snow@greatwall.com',
                                        name: 'John Snow',
                                        cpf_cnpj: '648.144.103-01',
                                        cc_emails: 'heisenberg@lospolloshermanos.com',
@@ -55,20 +57,20 @@ describe Iugu::Customer do
     end
 
     it 'should raise error when the email is empty', :vcr do
-      customer = Iugu::Customer.create
+      customer = client.customer.create
       expect(customer.errors['email']).to_not be_nil
     end
   end
 
   describe '.fetch' do
     it 'should return customers', :vcr do
-      customers = Iugu::Customer.fetch
+      customers = client.customer.fetch
 
       expect(customers.total).to eq(15)
     end
 
     it 'should return the customer', :vcr do
-      customer = Iugu::Customer.fetch(id: '2D3309067D0047B7AD55F38EBA0BA406')
+      customer = client.customer.fetch(id: '2D3309067D0047B7AD55F38EBA0BA406')
 
       expect(customer.email).to eq('john.snow@greatwall.com')
       expect(customer.name).to eq('John Snow')
@@ -77,7 +79,7 @@ describe Iugu::Customer do
 
   describe '.save' do
     it 'should save the customer', :vcr do
-      customer = Iugu::Customer.create(email: 'john.snow@greatwall.com',
+      customer = client.customer.create(email: 'john.snow@greatwall.com',
                                        name: 'John Snow',
                                        cpf_cnpj: '648.144.103-01',
                                        cc_emails: 'heisenberg@lospolloshermanos.com',
@@ -100,7 +102,7 @@ describe Iugu::Customer do
 
       customer.save
 
-      new_customer = Iugu::Customer.fetch(id: customer.id)
+      new_customer = client.customer.fetch(id: customer.id)
 
       expect(new_customer.zip_code).to eq('13058676')
       expect(new_customer.number).to eq('+9000')
@@ -112,7 +114,7 @@ describe Iugu::Customer do
 
   describe '.delete' do
     it 'should save the customer', :vcr do
-      customer = Iugu::Customer.create(email: 'john.snow@greatwall.com',
+      customer = client.customer.create(email: 'john.snow@greatwall.com',
                                        name: 'John Snow',
                                        cpf_cnpj: '648.144.103-01',
                                        cc_emails: 'heisenberg@lospolloshermanos.com',
@@ -125,7 +127,7 @@ describe Iugu::Customer do
                                        complement: '123C')
       customer.delete
 
-      expect { Iugu::Customer.fetch(id: customer.id) }.to raise_error(Iugu::ObjectNotFound)
+      expect { client.customer.fetch(id: customer.id) }.to raise_error(Iugu::ObjectNotFound)
     end
   end
 end

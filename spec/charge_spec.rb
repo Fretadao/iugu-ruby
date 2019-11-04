@@ -1,9 +1,11 @@
 require 'spec_helper'
 
 describe Iugu::Charge do
+  subject(:client) { Iugu::Client.new }
+
   describe '.create' do
     it 'should create a charge', :vcr do
-      charge = Iugu::Charge.create(method: 'bank_slip',
+      charge = client.charge.create(method: 'bank_slip',
                                    payer: { name: 'Awesome Customer',
                                             cpf_cnpj: '15111975000164',
                                             address: { zip_code: '29190560', number: '100'} },
@@ -20,7 +22,7 @@ describe Iugu::Charge do
     end
 
     it 'should create a charge with credit card', :vcr do
-      token = Iugu::PaymentToken.create(account_id: '842C5942D8E34372A8E554A1BC959086',
+      token = client.payment_token.create(account_id: '842C5942D8E34372A8E554A1BC959086',
                                         method: 'credit_card',
                                         test: 'true',
                                         data: {
@@ -33,7 +35,7 @@ describe Iugu::Charge do
                                         })
 
 
-      charge = Iugu::Charge.create(token: token.id,
+      charge = client.charge.create(token: token.id,
                                    payer: { name: 'Awesome Customer',
                                             cpf_cnpj: '15111975000164',
                                             address: { zip_code: '29190560', number: '100'} },
@@ -53,7 +55,7 @@ describe Iugu::Charge do
     end
 
     it 'should create a charge with credit card with installments', :vcr do
-      token = Iugu::PaymentToken.create(account_id: 'F17761200EC74469823D469BF2B211AC',
+      token = client.payment_token.create(account_id: 'F17761200EC74469823D469BF2B211AC',
                                         method: 'credit_card',
                                         test: 'true',
                                         data: {
@@ -66,7 +68,7 @@ describe Iugu::Charge do
                                         })
 
 
-      charge = Iugu::Charge.create(token: token.id,
+      charge = client.charge.create(token: token.id,
                                    payer: { name: 'Awesome Customer',
                                             cpf_cnpj: '15111975000164',
                                             address: { zip_code: '29190560', number: '100'} },
@@ -77,7 +79,7 @@ describe Iugu::Charge do
                                    months: 3, # 3 installments
                                    email: 'example@example.example')
 
-      invoice = Iugu::Invoice.fetch(id: charge.invoice_id)
+      invoice = client.invoice.fetch(id: charge.invoice_id)
 
       expect(charge.success).to be_truthy
       expect(invoice.status).to eq('paid')

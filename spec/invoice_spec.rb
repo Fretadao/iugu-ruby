@@ -1,9 +1,11 @@
 require 'spec_helper'
 
 describe Iugu::Invoice do
+  subject(:client) { Iugu::Client.new }
+
   describe '.create' do
     it 'should create an invoice for credit card payment', :vcr do
-      invoice = Iugu::Invoice.create(email: 'homer@simpsom.com',
+      invoice = client.invoice.create(email: 'homer@simpsom.com',
                                      due_date: '2017-11-30',
                                      items: [{ price_cents: 100, description: 'Rosquinha', quantity: 99 }],
                                      payable_with: 'credit_card')
@@ -19,13 +21,13 @@ describe Iugu::Invoice do
 
   describe '.fetch' do
     it 'should return invoices', :vcr do
-      invoices = Iugu::Invoice.fetch
+      invoices = client.invoice.fetch
 
       expect(invoices.total).to eq(5)
     end
 
     it 'should return invoice', :vcr do
-      invoice = Iugu::Invoice.fetch(id: '3F14349B01264947A3765A79B1DEA1B4')
+      invoice = client.invoice.fetch(id: '3F14349B01264947A3765A79B1DEA1B4')
 
       expect(invoice.email).to eq('homer@simpsom.com')
       expect(invoice.due_date).to eq('2017-11-30')
