@@ -4,15 +4,16 @@ require 'json'
 
 module Iugu
   class APIRequest
-
-    def self.request(method, url, data = {})
-      Iugu::Utils.auth_from_env if Iugu.api_key.nil?
-      raise Iugu::AuthenticationException, 'Chave de API não configurada. Utilize Iugu.api_key = ... para configurar.' if Iugu.api_key.nil?
-      handle_response self.send_request method, url, data
+    def self.request(method, url, data = {}, options = {})
+      api_key = options[:api_key] || Iugu.api_key || Iugu::Utils.auth_from_env
+      raise Iugu::AuthenticationException, "Chave de API não configurada. Utilize Iugu.api_key = ... para configurar." if api_key.nil?
+      handle_response self.send_request api_key, method, url, data
     end
 
-    def self.send_request(method, url, data)
-      RestClient::Request.execute build_request(method, url, data)
+    private
+
+    def self.send_request(api_key, method, url, data)
+      RestClient::Request.execute build_request(api_key, method, url, data)
     rescue RestClient::ResourceNotFound
       raise ObjectNotFound
     rescue RestClient::UnprocessableEntity => ex
@@ -21,10 +22,10 @@ module Iugu
       raise RequestWithErrors.new JSON.parse(ex.response)['errors']
     end
 
-    def self.build_request(method, url, data)
+    def self.build_request(api_key, method, url, data)
       {
         verify_ssl: true,
-        headers: default_headers,
+        headers: default_headers(api_key),
         method: method,
         payload: data.to_json,
         url: url,
@@ -41,17 +42,15 @@ module Iugu
       raise RequestFailed
     end
 
-    def self.default_headers
+    def self.default_headers(api_key)
       {
-        authorization: 'Basic ' + Base64.encode64(Iugu.api_key + ':'),
+        authorization: 'Basic ' + Base64.encode64(api_key + ":"),
         accept: 'application/json',
         accept_charset: 'utf-8',
         user_agent: 'Iugu RubyLibrary',
         accept_language: 'pt-br;q=0.9,pt-BR',
-        #content_type: 'application/x-www-form-urlencoded; charset=utf-8'
         content_type: 'application/json; charset=utf-8'
       }
     end
-
   end
 end

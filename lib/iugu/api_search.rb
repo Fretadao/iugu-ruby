@@ -1,8 +1,8 @@
 module Iugu
   module APICreate
     module ClassMethods
-      def search(options = {})
-        Iugu::Factory.create_from_response self.object_type, APIRequest.request("GET", self.url(options), options)
+      def search(params = {}, options = {})
+        Iugu::Factory.create_from_response self.object_type, APIRequest.request("GET", self.url(params), params, options)
       end
     end
 
