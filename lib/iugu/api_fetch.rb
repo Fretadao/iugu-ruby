@@ -1,6 +1,7 @@
 module Iugu
   module APIFetch
     def refresh(options = {})
+      options = self.options.merge(options)
       copy Iugu::Factory.create_from_response(self.class.object_type, APIRequest.request("GET", self.class.url(self.id), {}, options))
       self.errors = nil
       true
