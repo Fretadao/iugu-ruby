@@ -1,7 +1,7 @@
 module Iugu
   module APISave
-    def save
-      copy Iugu::Factory.create_from_response(self.class.object_type, APIRequest.request(is_new? ? "POST" : "PUT", self.class.url(self.attributes), modified_attributes, self.options))
+    def save(options = self.options)
+      copy Iugu::Factory.create_from_response(self.class.object_type, APIRequest.request(is_new? ? "POST" : "PUT", self.class.url(self.attributes), modified_attributes, options))
       self.errors = nil
       true
     rescue Iugu::RequestWithErrors => ex
