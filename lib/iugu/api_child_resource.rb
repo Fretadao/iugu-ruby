@@ -1,23 +1,21 @@
 module Iugu
   class APIChildResource
-    @parent_keys = {}
-    @fabricator = nil
-
-    def initialize(parent_keys = {}, fabricator)
+    def initialize(parent_keys = {}, fabricator = nil, options = {})
       @parent_keys = parent_keys
       @fabricator = fabricator
+      @options = options
     end
 
-    def create(attributes = {})
-      @fabricator.send "create", merge_params(attributes)
+    def create(params = {})
+      @fabricator.send "create", merge_params(params), options
     end
 
-    def search(options = {})
-      @fabricator.send "search", merge_params(options)
+    def search(params = {})
+      @fabricator.send "search", merge_params(params), options
     end
 
-    def fetch(options = nil)
-      @fabricator.send "fetch", merge_params({ id: options })
+    def fetch(params = nil)
+      @fabricator.send "fetch", merge_params({ id: params }), options
     end
 
     private

@@ -3,12 +3,13 @@ require 'set'
 module Iugu
   class Object
 
-    attr_accessor :errors
+    attr_accessor :errors, :options
 
     undef :id if method_defined?(:id)
 
-    def initialize(attributes = {})
+    def initialize(attributes = {}, options = {})
       @unsaved_attributes = Set.new
+      @options = options
       set_attributes attributes
     end
 
@@ -60,6 +61,5 @@ module Iugu
     def metaclass
       class << self; self; end
     end
-
   end
 end

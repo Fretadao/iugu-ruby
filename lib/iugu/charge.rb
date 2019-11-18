@@ -8,7 +8,7 @@ module Iugu
 
     def invoice
       return false unless @attributes['invoice_id']
-      Invoice.fetch @attributes['invoice_id']
+      Invoice.fetch(@attributes['invoice_id'], options)
     end
   end
 end
