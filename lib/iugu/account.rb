@@ -16,11 +16,11 @@ module Iugu
     BANKS = ['Itaú', 'Bradesco', 'Caixa Econômica', 'Banco do Brasil', 'Santander', 'Banrisul', 'Sicredi', 'Sicoob',
              'Inter', 'BRB', 'Via Credi', 'Neon', 'Nubank', 'Pagseguro', 'Banco Original']
 
-    def self.fetch_accounts(options = {})
+    def self.fetch_accounts(options: {})
       Iugu::Factory.create_from_response(object_type, APIRequest.request("GET", self.marketplace_url, {}, options), nil, options)
     end
 
-    def self.create(attributes = {}, options = {})
+    def self.create(attributes = {}, options: {})
       Iugu::Factory.create_from_response(self.object_type, APIRequest.request("POST", self.marketplace_url, attributes, options), nil, options)
     rescue Iugu::RequestWithErrors => ex
       obj = self.new
@@ -29,10 +29,10 @@ module Iugu
       obj
     end
 
-    def save(options = {})
+    def save(options: {})
       self.options = options if self.options.empty?
       if is_new?
-        copy(self.class.create(self.attributes, self.options))
+        copy(self.class.create(self.attributes, options: self.options))
       else
         refresh_tokens if self.options['user_token'].nil?
         super(api_key: options['user_token'])
