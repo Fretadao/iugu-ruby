@@ -17,7 +17,11 @@ require_relative 'iugu/payment_token'
 require_relative 'iugu/invoice'
 require_relative 'iugu/subscription'
 require_relative 'iugu/charge'
+require_relative 'iugu/account'
 require_relative 'iugu/plan'
+require_relative 'iugu/transfer'
+require_relative 'iugu/withdraw_request'
+require_relative 'iugu/api_token'
 
 module Iugu
   class AuthenticationException < StandardError
