@@ -9,7 +9,7 @@ describe Iugu::Account do
   let(:api_key) { { api_key: 123 } }
 
   describe '.fetch_accounts' do
-    subject { described_class.fetch_accounts(options: api_key) }
+    subject { described_class.fetch_accounts(api_key) }
 
     it 'fetches all accounts for a master account' do
       expect(Iugu::APIRequest).to receive(:request).with("GET", (Iugu.base_uri + "marketplace"), {}, api_key) { api_request }
@@ -22,7 +22,7 @@ describe Iugu::Account do
   describe '.create' do
     let(:attributes) { { name: 'Test' } }
 
-    subject { described_class.create(attributes, options: api_key) }
+    subject { described_class.create(attributes, api_key) }
 
     context 'successful' do
       it 'creates a new account' do
@@ -56,7 +56,7 @@ describe Iugu::Account do
         expect(Iugu::APIRequest).to receive(:request).with("POST", (Iugu.base_uri + "marketplace"), attributes, api_key) { api_request }
         expect(Iugu::Factory).to receive(:create_from_response).with("account", api_request, nil, api_key) { factory }
 
-        expect(subject.save(options: api_key)).to be_truthy
+        expect(subject.save(api_key)).to be_truthy
         expect(subject.id).to eq account_id
         expect(subject.name).to eq 'Test'
       end
@@ -76,7 +76,7 @@ describe Iugu::Account do
         expect(Iugu::APIRequest).to receive(:request).with("PUT", subject.class.url(subject.attributes), { "name" => 'Test 123' }, { api_key: user_token }) { api_request }
         expect(Iugu::Factory).to receive(:create_from_response).with("account", api_request) { factory }
 
-        expect(subject.save(options: api_key)).to be_truthy
+        expect(subject.save(api_key)).to be_truthy
         expect(subject.id).to eq account_id
         expect(subject.name).to eq 'Test 123'
       end
