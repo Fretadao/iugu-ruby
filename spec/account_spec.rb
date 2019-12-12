@@ -84,7 +84,7 @@ describe Iugu::Account do
   end
 
   describe '#refresh' do
-    let(:attributes) { { id: 1, name: 'Test' } }
+    let(:attributes) { { id: 1, name: 'Test', informations: [] } }
 
     subject { described_class.new(attributes, api_key) }
 
@@ -126,7 +126,7 @@ describe Iugu::Account do
     subject { described_class.new({ id: 1, name: 'Test' }.merge(attributes), api_key) }
 
     before do
-      allow(factory).to receive(:attributes) { attributes }
+      allow(factory).to receive(:attributes) { attributes.merge({ informations: []}) }
     end
 
     it 'verifies account' do

@@ -29,13 +29,20 @@ module Iugu
       obj
     end
 
+    def self.find(account_id, options = {})
+      acc = self.new({ id: account_id }, options)
+      acc.refresh
+      acc
+    end
+
     def save(options = {})
       self.options = options if self.options.empty?
+
       if is_new?
         copy(self.class.create(self.attributes, self.options))
       else
         refresh_tokens if self.options['user_token'].nil?
-        super(api_key: options['user_token'])
+        super(api_key: self.options['user_token'])
       end
 
       self.errors = nil
@@ -48,6 +55,13 @@ module Iugu
     def refresh
       refresh_tokens if self.options['user_token'].nil?
       super(api_key: options['user_token'])
+
+      self.informations.each do |info|
+        self.add_accessor(info['key'])
+        eval("self.#{info['key']} = '#{info['value']}'")
+      end
+
+      true
     end
 
     def request_verification(params = nil)
@@ -74,8 +88,9 @@ module Iugu
         self.cpf = cpf.stripped
       end
 
+      self.physical_products ||= false
+
       raise "Invalid price range" if ![PRICE_RANGE_100, PRICE_RANGE_100_500, PRICE_RANGE_500].include?(self.price_range)
-      raise "Invalid physical products" if ![true, false].include?(self.physical_products)
       raise "Invalid business type" if self.business_type.nil?
       raise "Invalid person type" if ![PERSON_TYPE_COMPANY, PERSON_TYPE_INDIVIDUAL].include?(self.person_type)
       raise "Invalid automatic transfer" if self.automatic_transfer.nil?
