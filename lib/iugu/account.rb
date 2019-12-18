@@ -21,7 +21,7 @@ module Iugu
     end
 
     def self.create(attributes = {}, options = {})
-      Iugu::Factory.create_from_response(self.object_type, APIRequest.request("POST", self.marketplace_url, attributes, options), nil, options)
+      Iugu::Factory.create_from_response(self.object_type, APIRequest.request("POST", "#{self.marketplace_url}/create_account", attributes, options), nil, options)
     rescue Iugu::RequestWithErrors => ex
       obj = self.new
       obj.set_attributes attributes, true

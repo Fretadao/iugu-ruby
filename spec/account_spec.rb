@@ -26,7 +26,7 @@ describe Iugu::Account do
 
     context 'successful' do
       it 'creates a new account' do
-        expect(Iugu::APIRequest).to receive(:request).with("POST", (Iugu.base_uri + "marketplace"), attributes, api_key) { api_request }
+        expect(Iugu::APIRequest).to receive(:request).with("POST", (Iugu.base_uri + "marketplace" + "/create_account"), attributes, api_key) { api_request }
         expect(Iugu::Factory).to receive(:create_from_response).with("account", api_request, nil, api_key) { factory }
 
         expect(subject).to eq(factory)
@@ -53,7 +53,7 @@ describe Iugu::Account do
       end
 
       it 'creates a new account' do
-        expect(Iugu::APIRequest).to receive(:request).with("POST", (Iugu.base_uri + "marketplace"), attributes, api_key) { api_request }
+        expect(Iugu::APIRequest).to receive(:request).with("POST", (Iugu.base_uri + "marketplace" + "/create_account"), attributes, api_key) { api_request }
         expect(Iugu::Factory).to receive(:create_from_response).with("account", api_request, nil, api_key) { factory }
 
         expect(subject.save(api_key)).to be_truthy
