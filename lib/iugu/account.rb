@@ -102,7 +102,7 @@ module Iugu
 
       if self.person_type == PERSON_TYPE_INDIVIDUAL
         raise "Invalid CPF" if !cpf.valid?
-        raise "Invalid name" if self.company_name.nil?
+        raise "Invalid name" if self.name.nil?
       end
 
       raise "Invalid address" if self.address.nil?
