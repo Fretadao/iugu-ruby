@@ -120,6 +120,8 @@ describe Iugu::Account do
         bank: 'Nubank',
         bank_ag: '0001',
         bank_cc: '00000001',
+        resp_name: 'Iuguinho',
+        resp_cpf: '108.559.150-64'
       }
     }
 
@@ -131,7 +133,15 @@ describe Iugu::Account do
 
     it 'verifies account' do
       expect(Iugu::APIRequest).to receive(:request).with("GET", (Iugu.base_uri + "retrieve_subaccounts_api_token"), {}, api_key) { api_tokens }
-      expect(Iugu::APIRequest).to receive(:request).with("POST", (subject.class.url(subject.id) + "/request_verification"), { data: attributes.merge(cnpj: "70906882000134") }, { api_key: user_token })
+      expect(Iugu::APIRequest).to receive(:request).with(
+        "POST", (subject.class.url(subject.id) + "/request_verification"),
+        {
+          data: attributes.merge(cnpj: "70906882000134", resp_cpf: '10855915064')
+        },
+        {
+          api_key: user_token
+        }
+      )
 
       expect(Iugu::APIRequest).to receive(:request).with("GET", subject.class.url(subject.id), {}, { api_key: user_token, "user_token" => user_token }) { api_request }
       expect(Iugu::Factory).to receive(:create_from_response).with("account", api_request) { factory }

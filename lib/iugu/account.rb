@@ -81,6 +81,11 @@ module Iugu
       if self.respond_to?(:cnpj)
         cnpj = CNPJ.new(self.cnpj)
         self.cnpj = cnpj.stripped
+
+        if self.respond_to?(:resp_cpf)
+          cpf = CPF.new(self.resp_cpf)
+          self.resp_cpf = cpf.stripped
+        end
       end
 
       if self.respond_to?(:cpf)
@@ -124,7 +129,6 @@ module Iugu
           business_type: self.business_type,
           person_type: self.person_type,
           automatic_transfer: self.automatic_transfer,
-          company_name: self.company_name,
           address: self.address,
           city: self.city,
           state: self.state,
@@ -133,10 +137,24 @@ module Iugu
           bank_ag: self.bank_ag,
           bank_cc: self.bank_cc,
           account_type: self.account_type,
-          cnpj: self.cnpj,
           telephone: self.telephone,
         }
       }
+
+
+      data[:data] = if self.person_type == PERSON_TYPE_COMPANY
+                      data[:data].merge(
+                        company_name: self.company_name,
+                        cnpj: self.cnpj,
+                        resp_name: self.resp_name,
+                        resp_cpf: self.resp_cpf
+                      )
+                    elsif self.person_type == PERSON_TYPE_INDIVIDUAL
+                      data[:data] = data[:data].merge(
+                        name: self.name,
+                        cpf: self.cpf,
+                      )
+                    end
 
       return data
     end
