@@ -59,7 +59,7 @@ module Iugu
       self.informations.each do |info|
         self.add_accessor(info['key'])
         eval("self.#{info['key']} = '#{info['value']}'")
-      end
+      end if self.respond_to?(:informations)
 
       true
     end
