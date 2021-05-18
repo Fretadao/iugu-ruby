@@ -8,6 +8,16 @@ module Iugu
       @attributes['id'].nil?
     end
 
+    def assign_attributes(new_attributes = {})
+      return self if new_attributes.empty?
+
+      new_attributes.each do |attr, value|
+        self.public_send("#{attr}=", value) if respond_to?("#{attr}=")
+      end
+
+      self
+    end
+
     protected
 
     def self.object_type
