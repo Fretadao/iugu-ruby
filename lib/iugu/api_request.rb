@@ -44,7 +44,7 @@ module Iugu
 
     def self.default_headers(api_key)
       {
-        authorization: 'Basic ' + Base64.encode64(api_key.strip + ":").strip,
+        authorization: 'Basic ' + Base64.strict_encode64(api_key + ":"),
         accept: 'application/json',
         accept_charset: 'utf-8',
         user_agent: 'Iugu RubyLibrary',
