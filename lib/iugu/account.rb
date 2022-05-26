@@ -13,8 +13,6 @@ module Iugu
     PRICE_RANGE_500 = 'Mais que R$ 500,00'
     ACCOUNT_TYPE_CHECKING = 'Corrente'
     ACCOUNT_TYPE_SAVING = 'Poupança'
-    BANKS = ['Itaú', 'Bradesco', 'Caixa Econômica', 'Banco do Brasil', 'Santander', 'Banrisul', 'Sicredi', 'Sicoob',
-             'Inter', 'BRB', 'Via Credi', 'Neon', 'Nubank', 'Pagseguro', 'Banco Original']
 
     def self.fetch_accounts(options = {})
       Iugu::Factory.create_from_response(object_type, APIRequest.request("GET", self.marketplace_url, {}, options), nil, options)
@@ -118,7 +116,6 @@ module Iugu
       raise "Invalid telephone" if self.telephone.nil?
 
       raise "Invalid account type" if ![ACCOUNT_TYPE_CHECKING, ACCOUNT_TYPE_SAVING].include?(self.account_type)
-      raise "Invalid bank" if !BANKS.include?(self.bank)
       raise "Invalid bank ag" if self.bank_ag.nil?
       raise "Invalid bank cc" if self.bank_cc.nil?
 
