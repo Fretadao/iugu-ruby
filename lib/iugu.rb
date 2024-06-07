@@ -21,6 +21,7 @@ require_relative 'iugu/account'
 require_relative 'iugu/plan'
 require_relative 'iugu/transfer'
 require_relative 'iugu/withdraw_request'
+require_relative 'iugu/signature_validate'
 require_relative 'iugu/api_token'
 
 module Iugu
