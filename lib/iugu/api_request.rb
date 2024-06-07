@@ -18,7 +18,6 @@ module Iugu
     private
 
     def self.send_request(api_key, method, url, data, rsa_key = nil)
-      require 'pry'; binding.pry
       RestClient::Request.execute(build_request(api_key, method, url, data, rsa_key))
     rescue RestClient::ResourceNotFound
       raise ObjectNotFound
