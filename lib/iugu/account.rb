@@ -54,10 +54,15 @@ module Iugu
       refresh_tokens if self.options['user_token'].nil?
       super(api_key: options['user_token'])
 
-      self.informations.each do |info|
-        self.add_accessor(info['key'])
-        eval("self.#{info['key']} = '#{info['value']}'")
-      end if self.respond_to?(:informations)
+      if self.respond_to?(:informations)
+        self.informations.each do |info|
+          attribute = info['key']
+          next if unpermitted_attribute?(attribute)
+
+          self.add_accessor(attribute)
+          self.public_send("#{attribute}=", info['value'])
+        end
+      end
 
       true
     end
@@ -74,6 +79,12 @@ module Iugu
     end
 
     private
+
+    def permitted_attribute?(candidate)
+      candidate.to_s.match?(/\A[a-z_][a-z0-9_]*[!?=]?\z/)
+    end
+
+    def unpermitted_attribute?(candidate) = !permitted_attribute?(candidate)
 
     def build_request_verification
       if self.respond_to?(:cnpj)
