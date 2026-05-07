@@ -84,20 +84,47 @@ describe Iugu::Account do
   end
 
   describe '#refresh' do
-    let(:attributes) { { id: 1, name: 'Test', informations: [] } }
-
     subject { described_class.new(attributes, api_key) }
 
     before do
       allow(factory).to receive(:attributes) { attributes }
     end
 
-    it 'fetches account data' do
-      expect(Iugu::APIRequest).to receive(:request).with("GET", (Iugu.base_uri + "retrieve_subaccounts_api_token"), {}, api_key) { api_tokens }
-      expect(Iugu::APIRequest).to receive(:request).with("GET", subject.class.url(subject.id), {}, { api_key: user_token, "user_token" => user_token }) { api_request }
-      expect(Iugu::Factory).to receive(:create_from_response).with("account", api_request) { factory }
+    context 'when informations only contains keys that are valid Ruby identifiers' do
+      let(:attributes) { { id: 1, name: 'Test', informations: [] } }
 
-      expect(subject.refresh).to be_truthy
+      it 'fetches account data' do
+        expect(Iugu::APIRequest).to receive(:request).with("GET", (Iugu.base_uri + "retrieve_subaccounts_api_token"), {}, api_key) { api_tokens }
+        expect(Iugu::APIRequest).to receive(:request).with("GET", subject.class.url(subject.id), {}, { api_key: user_token, "user_token" => user_token }) { api_request }
+        expect(Iugu::Factory).to receive(:create_from_response).with("account", api_request) { factory }
+
+        expect(subject.refresh).to be_truthy
+      end
+    end
+
+    context 'when informations contains a key that is not a valid Ruby identifier' do
+      let(:attributes) do
+        {
+          id: 1,
+          name: 'Test',
+          informations: [
+            { 'key' => 'FF:pix_withdraw', 'value' => 'true' },
+            { 'key' => 'can_receive?', 'value' => 'true' },
+            { 'key' => 'kn1_external_id', 'value' => 'UUID-00001-00001-00001' }
+          ]
+        }
+      end
+
+      it 'does not raise and stores the value in attributes' do
+        expect(Iugu::APIRequest).to receive(:request).with("GET", (Iugu.base_uri + "retrieve_subaccounts_api_token"), {}, api_key) { api_tokens }
+        expect(Iugu::APIRequest).to receive(:request).with("GET", subject.class.url(subject.id), {}, { api_key: user_token, "user_token" => user_token }) { api_request }
+        expect(Iugu::Factory).to receive(:create_from_response).with("account", api_request) { factory }
+
+        expect { subject.refresh }.not_to raise_error
+        expect(subject.attributes).not_to have_key('FF:pix_withdraw')
+        expect(subject.attributes['can_receive?']).to eq('true')
+        expect(subject.attributes['kn1_external_id']).to eq('UUID-00001-00001-00001')
+      end
     end
   end
 
